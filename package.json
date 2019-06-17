@@ -1,0 +1,20 @@
+{
+  "name": "sm-hunter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhangliu/sm-hunter.git"
+  },
+  "author": "zhangliu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhangliu/sm-hunter/issues"
+  },
+  "homepage": "https://github.com/zhangliu/sm-hunter#readme"
+}

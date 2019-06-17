@@ -1,1 +1,1 @@
-# zl-hunter
+# sm-hunter
