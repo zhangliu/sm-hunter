@@ -1,4 +1,4 @@
-const maimai = require('./maimai/player/index')
+const maimai = require('./maimai/staffs/index')
 
 const run = () => {
   maimai.run()

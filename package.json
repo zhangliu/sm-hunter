@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/zhangliu/sm-hunter/issues"
   },
-  "homepage": "https://github.com/zhangliu/sm-hunter#readme"
+  "homepage": "https://github.com/zhangliu/sm-hunter#readme",
+  "dependencies": {
+    "nightmare": "^3.0.2"
+  }
 }
