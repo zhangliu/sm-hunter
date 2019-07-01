@@ -1,20 +1,19 @@
-const { getPhone } = require('../../../client')
+const { getNm } = require('../../../utils/nm')
 
 const run = async () => {
-  const phone = getPhone('a1173791')
-  phone.login()
+  const nm = getNm({ openDevTools: { mode: 'detach' }, show: true })
   // 登录到app
-  // await login()
+  await login(nm)
 
-  // console.log('开始进入人才页面...')
-  // await nm.goto('https://maimai.cn/ent/talents/discover/search')
-  // let page = -1
-  // while(true) {
-  //   const staffs = await getStaffs(nm, ++page)
-  //   console.log(`获取到人才数据 ${staffs.length} 条`, staffs)
-  //   if (staffs.length <= 0) break
-  //   const filterStaffs = filterStaffs(nm, staffs)
-  // }
+  console.log('开始进入人才页面...')
+  await nm.goto('https://maimai.cn/ent/talents/discover/search')
+  let page = -1
+  while(true) {
+    const staffs = await getStaffs(nm, ++page)
+    console.log(`获取到人才数据 ${staffs.length} 条`, staffs)
+    if (staffs.length <= 0) break
+    const filterStaffs = filterStaffs(nm, staffs)
+  }
 
   // 加好友
 
@@ -26,7 +25,7 @@ const run = async () => {
 const login = async (nm) => {
   console.log('开始登陆脉脉...')
   await nm.goto('https://acc.maimai.cn/login')
-  await nm.insert('.loginPhoneInput', '').insert('#login_pw', '')
+  await nm.insert('.loginPhoneInput', '13564703909').insert('#login_pw', 'zhangliumm0')
   await nm.click('.loginBtn')
 
   try {
