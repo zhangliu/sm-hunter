@@ -1,18 +1,21 @@
 const Nightmare = require('nightmare')
 const querystring = require('querystring')
-const { sleep } = require('./time')
+const { sleep } = require('../time')
 
 const getNm = (opt = {}) => {
   const nightmare = Nightmare(opt)
-  nightmare.waitElement = waitElement.bind(nightmare)
+  nightmare.zlWait = zlWait.bind(nightmare)
+  nightmare.zlGoto = (url) => nightmare.goto(url).inject('js', `${__dirname}/helper.js`)
+  nightmare.zlClick = selector => zlClick.bind(nightmare, selector)
 
-  nightmare.req = {}
-  nightmare.req.get = get.bind(nightmare)
+  nightmare.req = {
+    get: get.bind(nightmare)
+  }
 
   return nightmare
 }
 
-const waitElement = async function(selector, timeout = 20000) {
+const zlWait = async function(selector, timeout = 20000) {
   let endTime = Date.now() + timeout
   while(Date.now() < endTime) {
     console.log('to find node remaining: ', endTime - Date.now())
@@ -24,6 +27,12 @@ const waitElement = async function(selector, timeout = 20000) {
     await sleep(1000)
   }
   throw new Error(`wait node "${selector}" time out!`)
+}
+
+const zlClick = selector => {
+  this.evaluate(selector => {
+    
+  }, selector)
 }
 
 const get = function(url, opt = {}) {

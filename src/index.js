@@ -1,7 +1,11 @@
-const maimai = require('./maimai/staffs/index')
+const maimai = require('./maimai/staffs')
 
-const run = () => {
-  maimai.run()
+const run = async () => {
+  try {
+    await maimai.run()
+  } catch(e) {
+    console.error(e)
+  }
 }
 
 module.exports = {
