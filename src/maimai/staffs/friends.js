@@ -1,5 +1,5 @@
 const {sleep} = require('../../../utils/time')
-const DB = require('./db')
+const DB = require('../db')
 
 const genFriendJobs = async (query) => {
   let page = 0

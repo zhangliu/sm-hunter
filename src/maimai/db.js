@@ -1,4 +1,4 @@
-const {createDb} = require('../../../utils/sqlite')
+const {createDb} = require('../../utils/sqlite')
 
 const DB = createDb('maimai.db')
 // DB.db.run('DROP TABLE staffs', () => {

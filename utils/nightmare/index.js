@@ -1,7 +1,7 @@
 const Nightmare = require('nightmare')
 const querystring = require('querystring')
 const { sleep } = require('../time')
-const {runTimes} = require('../runHelper')
+const {runTimes, waitTrue} = require('../runHelper')
 
 const getNm = (opt = {}) => {
   const nightmare = Nightmare(opt)
@@ -18,29 +18,9 @@ const getNm = (opt = {}) => {
   return nightmare
 }
 
-const zlWait = async function(selector, timeout = 20000) {
-  let endTime = Date.now() + timeout
-  while(Date.now() < endTime) {
-    console.log('to find node remaining: ', endTime - Date.now())
-    const result = await this.evaluate(selector => {
-      console.log('try to find', selector)
-      return !!document.querySelector(selector)
-    }, selector)
-    if (result) return
-    await sleep(1000)
-  }
-  throw new Error(`wait node "${selector}" time out!`)
-}
-
 const zlClick = async function(selector, times) {
   const fun = async () => await this.evaluate(selector => {
-    let ele
-    const match = selector.match(/(.*)\[innerText=(.*)\]$/)
-    if (match) {
-      const innerText = (match[2] || '').replace(/"/g, '')
-      ele = Array.from(document.querySelectorAll(match[1])).find(e => e.innerText === innerText)
-    } else ele = document.querySelector(selector)
-
+    const ele = __NM.findEle(selector)
     if (!ele) throw new Error(`没有发现元素 ${selector}`)
     ele.click()
   }, selector)
@@ -60,19 +40,35 @@ const zlTryClick = async function(selector, times){
 const zlLogin = async function(url, loginQuery, loginUrl) {
   console.log(`尝试登录系统 ${url} 中`)
   try {
-    return await this.goto(url).zlWait(loginQuery, 5000)
+    await this.zlGoto(url).wait(2000).zlWait(loginQuery, 5000)
+    console.log('登录成功！')
+    return
   } catch(e) {
     console.error(e)
   }
   console.log('发现状态为未登录，尝试登录中...')
-  if (loginUrl) await this.goto(loginUrl)
+  if (loginUrl) await this.zlGoto(loginUrl)
 
   console.log('请输入用户名密码！')
   const oldUrl = await this.url()
   
-  await runTimes(async () => (await this.url() !== oldUrl), 90)
+  await waitTrue(async () => (await this.url() !== oldUrl), 90000)
 
   await this.zlLogin(url, loginQuery, loginUrl)
+}
+
+const zlWait = async function(selector, timeout = 20000) {
+  let endTime = Date.now() + timeout
+  while(Date.now() < endTime) {
+    console.log('尝试发现元素：', selector, '剩余时间：', endTime - Date.now())
+    const result = await this.evaluate(selector => {
+      console.log('尝试发现元素：', selector)
+      return !!__NM.findEle(selector)
+    }, selector)
+    if (result) return
+    await sleep(1000)
+  }
+  throw new Error(`wait node "${selector}" time out!`)
 }
 
 const get = function(url, opt = {}) {

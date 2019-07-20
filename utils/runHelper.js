@@ -21,6 +21,20 @@ const runOnce = async (func, timeout = 5000) => {
   ])
 }
 
+const waitTrue = async (func, timeout = 5000) => {
+  const endtime = Date.now() + timeout
+  while(Date.now() < endtime) {
+    try {
+      if (await runOnce(func, 1000) === true) return
+    } catch (e) {
+      console.log(e.message)
+    }
+    await sleep(1000)
+  }
+  throw new Error('运行函数失败！')
+}
+
 module.exports = {
   runTimes,
+  waitTrue,
 }
