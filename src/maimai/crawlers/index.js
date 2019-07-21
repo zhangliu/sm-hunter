@@ -1,11 +1,10 @@
 const { getNm } = require('../../../utils/nightmare')
 const {sleep} = require('../../../utils/time')
 const DB = require('../db')
-const {querys} = require('./config')
 
 const query = {
   province: '上海',
-  keyword: 'java',
+  keyword: '前端',
   is_211_985: 1,
   channel: 'www',
   company_level: -1,
@@ -36,6 +35,7 @@ const run = async () => {
       throw e
     }
   }
+  console.log('恭喜，已经获取所有数据！')
 }
 
 const getStaffs = async (nm, page) => {
@@ -59,14 +59,16 @@ const getGUID = () => {
 const saveStaffs = async (nm, staffs) => {
   console.log('开始保存人才数据...')
   for(const staff of staffs) {
+    const suid = `maimai_${staff.id}`
     const data = {
-      mmUid: staff.id,
-      query,
+      suid,
+      summary: JSON.stringify([query.keyword]),
       detail: JSON.stringify(staff),
-      createTime: Date.now()
+      createTime: Date.now(),
+      source: 'maimai'
     }
-    const dbData = await DB.query('staffs', `mmUid=${staff.id}`)
-    if (dbData && dbData.length > 0) await DB.del('staffs', `mmUid=${staff.id}`)
+    const dbData = await DB.query('staffs', `suid="${suid}"`)
+    if (dbData && dbData.length > 0) await DB.del('staffs', `suid="${suid}"`)
     await DB.insert('staffs', data)
     console.log(`保存 ${staff.name} 简历成功！`)
   }

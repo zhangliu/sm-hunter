@@ -1,13 +1,23 @@
-const maimai = require('./maimai/staffs')
+const crawlers = require('./maimai/crawlers')
+const filters = require('./maimai/filters')
 
-const run = async () => {
+const fetch = async () => {
   try {
-    await maimai.run()
+    await crawlers.run()
+  } catch(e) {
+    console.error(e)
+  }
+}
+
+const filter = async () => {
+  try {
+    await filters.run()
   } catch(e) {
     console.error(e)
   }
 }
 
 module.exports = {
-  run
+  fetch,
+  filter
 }

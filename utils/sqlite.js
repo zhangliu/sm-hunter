@@ -7,7 +7,8 @@ const createDb = (filename) => {
     createTable: createTable.bind(db),
     insert: insert.bind(db),
     query: query.bind(db),
-    del: del.bind(db)
+    del: del.bind(db),
+    update: update.bind(db)
   }
 }
 
@@ -53,6 +54,20 @@ const del = function(table, query) {
     this.run(sql, error => {
       if (error) return j(error)
       return r()
+    })
+  })
+}
+
+const update = function(table, query, data) {
+  if (!query) throw new Error('need query to delete!')
+
+  const keys = Object.keys(data)
+  const setStr = keys.map(key => `${key}=?`).join(',')
+  const sql = `UPDATE ${table} set ${setStr} WHERE ${query}`
+  return new Promise((r, j) => {
+    this.prepare(sql).run(Object.values(data), (err, data) => {
+      if (err) return j(err)
+      return r(data)
     })
   })
 }
