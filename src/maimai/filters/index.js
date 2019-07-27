@@ -1,4 +1,4 @@
-const DB = require('../db')
+const DB = require('../utils/db')
 const { companys } = require('../../../utils/companys')
 
 const DAY = 24 * 60 * 60 * 1000
@@ -57,15 +57,6 @@ const isJunior = (staff) => {
   return edus.find(s => s.sdegree === '专科')
 }
 
-// const addSummary = async (staff, opts) => {
-//   if (opts.isJunior) {
-//     let summary = JSON.parse(staff.summary)
-//     summary.push('专科')
-//     summary = [...(new Set(summary))]
-//     await DB.update('staffs', `suid="${staff.suid}"`, {summary: JSON.stringify(summary)})
-//   }
-// }
-
 const isJumpOk = (staff) => {
   const { jump } = query
 
@@ -98,18 +89,17 @@ const getWorktime = (item) => {
 const genJob = async (staffs, type) => {
   console.log('开始创建 add_friend jobs...')
   for(const staff of staffs) {
-    const jid = `${type}_${staff.suid}`
+    const sid = `${type}_${staff.sid}`
     const data = {
-      jid,
-      detail: JSON.stringify(staff),
+      sid,
+      detail: staff.detail,
       createTime: Date.now(),
       type,
       status: ''
     }
-    const dbData = await DB.query('jobs', `jid="${jid}"`)
+    const dbData = await DB.query('jobs', `sid="${sid}"`)
     if (dbData && dbData.length > 0) continue
     await DB.insert('jobs', data)
-    console.log('创建 job 成功！')
   }
 }
 

@@ -1,6 +1,6 @@
 const { getNm } = require('../../../utils/nightmare')
 const {sleep} = require('../../../utils/time')
-const DB = require('../db')
+const DB = require('../utils/db')
 
 const query = {
   province: '上海',
@@ -29,7 +29,7 @@ const run = async () => {
       console.log(`获取到人才数据 ${staffs.length} 条`)
       if (staffs.length <= 0) break
       await saveStaffs(nm, staffs)
-      await sleep(5000)
+      await sleep(3000)
     } catch(e) {
       console.log(`无法保存第 ${page} 页数据！条件 ${query}`)
       throw e
@@ -59,16 +59,16 @@ const getGUID = () => {
 const saveStaffs = async (nm, staffs) => {
   console.log('开始保存人才数据...')
   for(const staff of staffs) {
-    const suid = `maimai_${staff.id}`
+    const sid = `maimai_${staff.id}`
     const data = {
-      suid,
+      sid,
       summary: JSON.stringify([query.keyword]),
       detail: JSON.stringify(staff),
       createTime: Date.now(),
       source: 'maimai'
     }
-    const dbData = await DB.query('staffs', `suid="${suid}"`)
-    if (dbData && dbData.length > 0) await DB.del('staffs', `suid="${suid}"`)
+    const dbData = await DB.query('staffs', `sid="${sid}"`)
+    if (dbData && dbData.length > 0) await DB.del('staffs', `sid="${sid}"`)
     await DB.insert('staffs', data)
     console.log(`保存 ${staff.name} 简历成功！`)
   }

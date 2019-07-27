@@ -1,3 +1,3 @@
-const { fetch } = require('../src/index')
+const { run } = require('../src/maimai/fetchers/index')
 
-fetch()
+run()

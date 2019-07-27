@@ -1,3 +1,3 @@
-const { filter } = require('../src/index')
+const { run } = require('../src/maimai/filters/index')
 
-filter()
+run()
