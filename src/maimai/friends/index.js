@@ -10,10 +10,11 @@ const run = async (query) => {
   await nm.zlLogin('https://maimai.cn/ent/talents/discover/search', 'span[innerText="搜索人才"]')
   let page = 0
   while (true) {
+    console.log(`开始添加第 ${page} 页的好友！`)
     const friendJobs = await DB.query('jobs', 'type="add_friend"', {page: page++, pageSize: PAGE_SIZE})
     if (friendJobs.length <= 0) return
     await addFriends(nm, friendJobs)
-    await sleep(300)
+    await sleep(1000)
   }
 }
 
@@ -21,13 +22,13 @@ const addFriends = async (nm, jobs) => {
   for (const job of jobs) {
     if (job.status === 'success') continue
     const info = JSON.parse(job.detail)
-
+    console.log(`开始进入人才页面：${info.detail_url}`)
     await nm.zlGoto(info.detail_url)
     // 是否需要加好友
     try {
       await nm.zlClick('div.btn[innerText="＋加好友"]', 3)
-      await sleep(1000)
-      return
+      await sleep(3000)
+      continue
     } catch(e) {
       console.log('没有发现 "＋加好友" 按钮')
     }
@@ -35,7 +36,7 @@ const addFriends = async (nm, jobs) => {
     // 加好友中
     try {
       await nm.zlWait('div.btn[innerText="已申请好友"]', 1000)
-      return
+      continue
     } catch(e) {
       console.log('没有发现 "已申请好友" 按钮')
     }
@@ -43,8 +44,8 @@ const addFriends = async (nm, jobs) => {
     // 是否已经成功加好友了
     try {
       await nm.zlWait('div.btn[innerText="发消息"]', 1000)
-      DB.update('jobs', `sid="${job.sid}"`, {status: 'success'})
-      return
+      await DB.update('jobs', `sid="${job.sid}"`, {status: 'success'})
+      continue
     } catch(e) {
       console.log('没有发现 "发消息" 按钮')
     }
